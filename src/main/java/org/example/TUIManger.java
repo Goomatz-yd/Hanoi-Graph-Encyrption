@@ -39,7 +39,8 @@ public class TUIManger {
         }
     }
 
-    public int getInputNextState(int state){
+    public int getInputNextState(int state) throws InterruptedException {
+        Scanner Scanner = new Scanner(System.in);
         int origin;
         int destination;
         int newstate = -1;
@@ -47,12 +48,18 @@ public class TUIManger {
         origin = Scanner.next().charAt(0) - 'A';
         System.out.println("choose a peg to take to(A/B/C)):");
         destination = Scanner.next().charAt(0) - 'A';
-        //reference to action in HanoiLogic. if a change is possible, return it, otherwise return -1.
+        newstate = HanoiLogic.isLegalNeighbor(state, (origin*3+destination))==1? (origin*3+destination) : -1;
         if(newstate == -1){
-            printWrong();
+            printWrong(origin);
             getInputNextState(state);
         }
+        Scanner.close();
         return newstate;
 
+    }
+    private static void printWrong(int returnstate) throws InterruptedException {
+        System.out.println("wrong input");
+        Thread.sleep(3000);
+        printState(returnstate);
     }
 }
