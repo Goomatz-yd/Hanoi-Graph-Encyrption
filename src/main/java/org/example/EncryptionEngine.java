@@ -1,15 +1,17 @@
 package org.example;
 
+import java.math.BigInteger;
+
 public class EncryptionEngine {
     private EncryptionEngine(){
 
     }
-    public EncryptionEngine getInstance(){
+    public static EncryptionEngine getInstance(){
         return new EncryptionEngine();
     }
 
-    private int extrapolateNumFromPath(){
+    private BigInteger extrapolateNumFromPath(){
 
-        return 0;
+        return BigInteger.valueOf(0);
     }
 }

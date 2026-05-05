@@ -1,12 +1,15 @@
 package org.example;
 
-public class HanoiLogic {
-    public static int rings = 5;
+import java.util.ArrayList;
+import java.util.List;
 
-    public static char isLegalNeighbor(int currentState, int newState) {
+public class HanoiLogic {
+
+
+    public static Boolean isLegalNeighbor(int currentState, int newState, int rings) {
         //check if the new state isn't already the current one - no move
         if (currentState == newState) {
-            return 0;
+            return false;
         }
 
         int changedRing = -1;
@@ -24,7 +27,7 @@ public class HanoiLogic {
             if (currentRod != targetRod) {
                 //if there is a required change in the middle, move is illegal
                 if (changedRing != -1) {
-                    return 0;
+                    return false;
                 }
                 changedRing = i;
                 sourceRod = currentRod;
@@ -42,10 +45,40 @@ public class HanoiLogic {
         for (int i = 0; i < changedRing; i++) {
             int smallerRingRod = curr % 3;
             if (smallerRingRod == sourceRod || smallerRingRod == destRod) {
-                return 0;
+                return false;
             }
             curr /= 3;
         }
-        return 1;
+        return true;
+    }
+    /**
+     * Calculates and returns all legal neighbor states from a given state.
+     * Crucial for Phase 2 (Unranking).
+     */
+    public static int[] getLegalNeighbors(int currentState, int rings) {
+        List<Integer> validNeighbors = new ArrayList<>();
+        
+        int maxState = (int) Math.pow(3, rings);
+
+        for (int ringToMove = 0; ringToMove < rings; ringToMove++) {
+            int divisor = (int) Math.pow(3, ringToMove);
+            int currentRod = (currentState / divisor) % 3;
+
+            for (int targetRod = 0; targetRod < 3; targetRod++) {
+                if (currentRod != targetRod) {
+                    int difference = (targetRod - currentRod) * divisor;
+                    int hypotheticalState = currentState + difference;
+
+                    if (hypotheticalState >= 0 && hypotheticalState < maxState) {
+                        if (isLegalNeighbor(currentState, hypotheticalState, rings)) {
+                            validNeighbors.add(hypotheticalState);
+                        }
+                    }
+                }
+            }
+        }
+        int[] result = validNeighbors.stream().mapToInt(i -> i).toArray();
+        java.util.Arrays.sort(result);
+        return result;
     }
 }
