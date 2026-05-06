@@ -1,5 +1,7 @@
 package org.example;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 public class TUIManager {
@@ -48,27 +50,63 @@ public class TUIManager {
         }
     }
 
-    public int getInputNextState(int state, int rings) throws InterruptedException {
-        Scanner Scanner = new Scanner(System.in);
-        int origin;
-        int destination;
-        int newstate = -1;
-        System.out.println("choose a peg to take from(A/B/C):");
-        origin = Scanner.next().charAt(0) - 'A';
-        System.out.println("choose a peg to take to(A/B/C)):");
-        destination = Scanner.next().charAt(0) - 'A';
-        newstate = HanoiLogic.isLegalNeighbor(state, (origin*3+destination), rings)? (origin*3+destination) : -1;
-        if(newstate == -1){
-            printWrong(origin, rings);
-            getInputNextState(state,rings);
-        }
-        Scanner.close();
-        return newstate;
+    /**
+     * Loops L times and uses the existing getInputNextState function
+     * to build the user's secret passphrase.
+     */
+    public static List<Integer> getPlayerHanoiInput(int r, int l) throws InterruptedException {
+        List<Integer> moves = new ArrayList<>();
+        int currentState = 0;
 
+        System.out.println("--- GENERATING GEOMETRIC PASSPHRASE ---");
+        System.out.println("Please make " + l + " legal moves.");
+
+        for (int i = 0; i < l; i++) {
+            printState(currentState, r);
+            int newState = getInputNextState(currentState, r);
+            int destPeg = -1;
+            for (int ring = 0; ring < r; ring++) {
+                int div = (int) Math.pow(3, ring);
+                int oldPeg = (currentState / div) % 3;
+                int newPeg = (newState / div) % 3;
+
+                if (oldPeg != newPeg) {
+                    destPeg = newPeg;
+                    break;
+                }
+            }
+            moves.add(destPeg);
+            currentState = newState;
+            System.out.println("Move recorded! (" + moves.size() + "/" + l + ")\n");
+        }
+        return moves;
     }
-    private static void printWrong(int returnstate, int rings) throws InterruptedException {
-        System.out.println("wrong input");
-        Thread.sleep(3000);
-        printState(returnstate, rings);
+
+    public static int getInputNextState(int state, int rings) throws InterruptedException {
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Choose a peg to take from (A/B/C): ");
+        int origin = scanner.next().toUpperCase().charAt(0) - 'A';
+        System.out.print("Choose a peg to take to (A/B/C): ");
+        int destination = scanner.next().toUpperCase().charAt(0) - 'A';
+        int newstate = calculateNextState(state, origin, destination, rings);
+        if (newstate != -1 && HanoiLogic.isLegalNeighbor(state, newstate, rings)) {
+            return newstate;
+        } else {
+            System.out.println("WRONG INPUT! That move is illegal. Try again.");
+            return getInputNextState(state, rings);
+        }
+    }
+
+    private static int calculateNextState(int currentState, int origin, int dest, int r) {
+        int[] neighbors = HanoiLogic.getLegalNeighbors(currentState, r);
+        for (int n : neighbors) {
+            for (int i = 0; i < r; i++) {
+                int div = (int) Math.pow(3, i);
+                if ((currentState / div) % 3 == origin && (n / div) % 3 == dest) {
+                    return n;
+                }
+            }
+        }
+        return -1;
     }
 }

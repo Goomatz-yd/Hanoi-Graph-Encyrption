@@ -4,6 +4,9 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
+import static javax.xml.crypto.dsig.DigestMethod.SHA256;
+
+
 public class HanoiMath {
     static public BigInteger sumFirstRowWarshallForKLong(int r, int k) {
         int statesAmount = 3;
@@ -92,8 +95,10 @@ public class HanoiMath {
         return seed;
     }
 
-    public static BigInteger magnifySeed(BigInteger baseSeed, BigInteger maxConjectures) {
-        return null;
+    public static BigInteger magnifySeed(int numOfMoves, BigInteger baseSeed, BigInteger maxConjectures) {
+        BigInteger maxBaseSeed = BigInteger.valueOf(3).pow(numOfMoves);
+        BigInteger scalingFactor = maxConjectures.divide(maxBaseSeed);
+        return baseSeed.multiply(scalingFactor).add(BigInteger.ONE);
     }
 }
 
