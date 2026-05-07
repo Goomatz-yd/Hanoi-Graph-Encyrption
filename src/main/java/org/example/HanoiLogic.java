@@ -5,9 +5,14 @@ import java.util.List;
 
 public class HanoiLogic {
 
-
+    /**
+     * checks if a state transition is legal
+     * @param currentState
+     * @param newState
+     * @param rings
+     * @return
+     */
     public static Boolean isLegalNeighbor(int currentState, int newState, int rings) {
-        //check if the new state isn't already the current one - no move
         if (currentState == newState) {
             return false;
         }
@@ -19,13 +24,11 @@ public class HanoiLogic {
         int curr = currentState;
         int next = newState;
 
-        //parse the state into logic
         for (int i = 0; i < rings; i++) {
             int currentRod = curr % 3; 
             int targetRod = next % 3; 
 
             if (currentRod != targetRod) {
-                //if there is a required change in the middle, move is illegal
                 if (changedRing != -1) {
                     return false;
                 }
@@ -34,13 +37,11 @@ public class HanoiLogic {
                 destRod = targetRod;
             }
 
-            //check the next ring
             curr /= 3;
             next /= 3;
         }
 
 
-        //check all rings are up to the rules
         curr = currentState;
         for (int i = 0; i < changedRing; i++) {
             int smallerRingRod = curr % 3;
@@ -51,9 +52,12 @@ public class HanoiLogic {
         }
         return true;
     }
+
     /**
-     * Calculates and returns all legal neighbor states from a given state.
-     * Crucial for Phase 2 (Unranking).
+     * gets all legal neighbors of the current state without creating a graph
+     * @param currentState
+     * @param rings
+     * @return
      */
     public static int[] getLegalNeighbors(int currentState, int rings) {
         List<Integer> validNeighbors = new ArrayList<>();

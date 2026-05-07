@@ -4,6 +4,14 @@ import java.math.BigInteger;
 import java.util.List;
 
 public class KeyGenerator {
+    /**
+     * generates a keystream from a seed inspired by extrapolateNumFromPath
+     * in psuedocode this function utilizes extrapolateNumFromPath to generate a path and then uses that path to generate the keystream
+     * @param r
+     * @param k
+     * @param seed
+     * @return
+     */
     public static byte[] seedToKey(int r, int k, BigInteger seed) {
         List<Integer> path = HanoiMath.generateNthPath(r, k, seed);
         int numBytes = (k * 2 + 7) / 8;
@@ -30,7 +38,14 @@ public class KeyGenerator {
         return keystream;
     }
 
-
+    /**
+     * dictates the flow of the key generation process
+     * @param r
+     * @param l
+     * @param k
+     * @return
+     * @throws InterruptedException
+     */
     public static KeyBundle generateKey(int r, int l, int k) throws InterruptedException {
         List<Integer> seedPath = TUIManager.getPlayerHanoiInput(r, l);
         BigInteger baseSeed = HanoiMath.extrapolateNumFromPath(seedPath);

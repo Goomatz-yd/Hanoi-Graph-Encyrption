@@ -2,7 +2,14 @@ package org.example;
 import java.math.BigInteger;
 
 public class EncryptionEngine {
-
+    /**
+     * Encrypts a message using the Hanoi algorithm.
+     * @param message
+     * @param r
+     * @param l
+     * @return
+     * @throws InterruptedException
+     */
     public static CipherResult encrypt(byte[] message, int r, int l) throws InterruptedException {
         int k = message.length * 4;
         KeyBundle bundle = KeyGenerator.generateKey(r, l, k);
@@ -13,6 +20,13 @@ public class EncryptionEngine {
         return new CipherResult(ciphertext, bundle.publicSeed);
     }
 
+    /**
+     * Decrypts a message using the Hanoi algorithm.
+     * @param r
+     * @param ciphertext
+     * @param seed
+     * @return
+     */
     public static byte[] decrypt(int r, byte[] ciphertext, BigInteger seed) {
         int k = ciphertext.length * 4;
         byte[] keystream = KeyGenerator.seedToKey(r, k, seed);

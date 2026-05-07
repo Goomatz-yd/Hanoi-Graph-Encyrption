@@ -6,6 +6,13 @@ import java.util.List;
 
 
 public class HanoiMath {
+    /**
+     * effectivly sums the first row of an adjecancy matrix for k moves like in warshall but again without generating the graph
+     * instead it takes a dfs approach in the loop to count the amount of paths from the first state(00000) to every other state
+     * @param r
+     * @param k
+     * @return
+     */
     public static BigInteger sumFirstRowWarshallForKLong(int r, int k) {
         int statesAmount = 1;
         for (int i = r; i >= 1; i--) {
@@ -41,6 +48,12 @@ public class HanoiMath {
         return currentPaths[corner0].add(currentPaths[corner1]).add(currentPaths[corner2]);
     }
 
+    /**
+     * used in generate nth path, build somewhat of an adjecancy matrix for k moves but in reverse so generate nth path is O(k)
+     * @param r
+     * @param k
+     * @return
+     */
     private static BigInteger[][] buildDPTable(int r, int k) {
         int statesAmount = 1;
         for (int i = r; i >= 1; i--) {
@@ -69,6 +82,13 @@ public class HanoiMath {
         return dpTable;
     }
 
+    /**
+     * utilizes the dp table to generate the nth path in O(k) time by searching for the bigger decrease in the dp table each time(combi-unranking)
+     * @param r
+     * @param k
+     * @param targetN - path number in order of all paths
+     * @return
+     */
     public static List<Integer> generateNthPath(int r, int k, BigInteger targetN) {
         BigInteger[][] dpTable = buildDPTable(r, k);
         List<Integer> path = new ArrayList<>();
@@ -92,6 +112,11 @@ public class HanoiMath {
         return path;
     }
 
+    /**
+     * extrapolates the number from a path by multiplying the running total of moves by 3 and adding the move - therefore matching the added number to the move placement in order
+     * @param path
+     * @return
+     */
     public static BigInteger extrapolateNumFromPath(List<Integer> path) {
         BigInteger seed = BigInteger.ZERO;
         BigInteger multiplier = BigInteger.valueOf(3);
@@ -101,6 +126,13 @@ public class HanoiMath {
         return seed;
     }
 
+    /**
+     * magnifies a number from the player moves from its range to the range of the conjectures
+     * @param numOfMoves
+     * @param baseSeed
+     * @param maxConjectures
+     * @return
+     */
     public static BigInteger magnifySeed(int numOfMoves, BigInteger baseSeed, BigInteger maxConjectures) {
         BigInteger maxBaseSeed = BigInteger.valueOf(3).pow(numOfMoves);
         BigInteger scalingFactor = maxConjectures.divide(maxBaseSeed);
