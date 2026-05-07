@@ -4,46 +4,52 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
-import static javax.xml.crypto.dsig.DigestMethod.SHA256;
-
 
 public class HanoiMath {
-    static public BigInteger sumFirstRowWarshallForKLong(int r, int k) {
-        int statesAmount = 3;
+    public static BigInteger sumFirstRowWarshallForKLong(int r, int k) {
+        int statesAmount = 1;
         for (int i = r; i >= 1; i--) {
             statesAmount *= 3;
         }
+
         BigInteger[] currentPaths = new BigInteger[statesAmount];
         for (int i = 0; i < statesAmount; i++) {
             currentPaths[i] = BigInteger.ZERO;
         }
         currentPaths[0] = BigInteger.ONE;
-        for (int i = 0; i < k; i++) {
+
+        for (int step = 0; step < k; step++) {
             BigInteger[] nextPaths = new BigInteger[statesAmount];
             for (int j = 0; j < statesAmount; j++) {
                 nextPaths[j] = BigInteger.ZERO;
             }
             for (int node = 0; node < statesAmount; node++) {
-                int[] neighbours = HanoiLogic.getLegalNeighbors(node, r);
-                for (int neighbour : neighbours) {
-                    nextPaths[neighbour] = nextPaths[neighbour].add(currentPaths[node]);
+                if (currentPaths[node].compareTo(BigInteger.ZERO) > 0) {
+                    int[] neighbors = HanoiLogic.getLegalNeighbors(node, r);
+                    for (int neighbor : neighbors) {
+                        nextPaths[neighbor] = nextPaths[neighbor].add(currentPaths[node]);
+                    }
                 }
             }
-            System.arraycopy(nextPaths, 0, currentPaths, 0, statesAmount);
+            currentPaths = nextPaths;
         }
-        BigInteger totalPaths = BigInteger.ZERO;
-        for (int i = 0; i < statesAmount; i++) {
-            totalPaths = totalPaths.add(currentPaths[i]);
-        }
-        return totalPaths;
+
+        int corner0 = 0;
+        int corner1 = (statesAmount - 1) / 2;
+        int corner2 = statesAmount - 1;
+
+        return currentPaths[corner0].add(currentPaths[corner1]).add(currentPaths[corner2]);
     }
 
     private static BigInteger[][] buildDPTable(int r, int k) {
-        int numNodes = (int) Math.pow(3, r);
-        BigInteger[][] dpTable = new BigInteger[k + 1][numNodes];
-        int corner0 = 0, corner1 = (numNodes - 1) / 2, corner2 = numNodes - 1;
+        int statesAmount = 1;
+        for (int i = r; i >= 1; i--) {
+            statesAmount *= 3;
+        }
+        BigInteger[][] dpTable = new BigInteger[k + 1][statesAmount];
+        int corner0 = 0, corner1 = (statesAmount - 1) / 2, corner2 = statesAmount - 1;
 
-        for (int node = 0; node < numNodes; node++) {
+        for (int node = 0; node < statesAmount; node++) {
             if (node == corner0 || node == corner1 || node == corner2) {
                 dpTable[0][node] = BigInteger.ONE;
             } else {
@@ -52,7 +58,7 @@ public class HanoiMath {
         }
 
         for (int step = 1; step <= k; step++) {
-            for (int node = 0; node < numNodes; node++) {
+            for (int node = 0; node < statesAmount; node++) {
                 dpTable[step][node] = BigInteger.ZERO;
                 int[] neighbors = HanoiLogic.getLegalNeighbors(node, r);
                 for (int neighbor : neighbors) {
