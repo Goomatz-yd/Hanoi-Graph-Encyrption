@@ -71,19 +71,18 @@ public class Main {
 
     //uses to simulate a transfer of the O to the I via hardcopy, since copy-paste fucks it up
     private static void simulateTransmission() throws IOException {
-        System.out.println("\n--- SIMULATING FILE TRANSMISSION ---");
         if (Files.exists(CIPHER_OUTPUT)) {
             Files.copy(CIPHER_OUTPUT, CIPHER_INPUT, StandardCopyOption.REPLACE_EXISTING);
-            System.out.println("Safely copied " + CIPHER_OUTPUT.getFileName() + " to " + CIPHER_INPUT.getFileName());
+            System.out.println("copied " + CIPHER_OUTPUT.getFileName() + " to " + CIPHER_INPUT.getFileName());
         } else {
-            System.out.println("Error: " + CIPHER_OUTPUT.getFileName() + " not found. Run Encrypt first.");
+            System.out.println("error: " + CIPHER_OUTPUT.getFileName() + " missing, encrypt first.");
         }
 
         if (Files.exists(KEY_OUTPUT)) {
             Files.copy(KEY_OUTPUT, KEY_INPUT, StandardCopyOption.REPLACE_EXISTING);
-            System.out.println("Safely copied " + KEY_OUTPUT.getFileName() + " to " + KEY_INPUT.getFileName());
+            System.out.println("copied " + KEY_OUTPUT.getFileName() + " to " + KEY_INPUT.getFileName());
         } else {
-            System.out.println("Error: " + KEY_OUTPUT.getFileName() + " not found. Run Encrypt first.");
+            System.out.println("error: " + KEY_OUTPUT.getFileName() + " missing, encrypt first.");
         }
     }
     //dictates the flow of encryption, when not only encrypts, handles the IO UI around the encryption
